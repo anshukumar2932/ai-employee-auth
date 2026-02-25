@@ -1,0 +1,9 @@
+{
+  "n_samples": 300000,
+  "n_subjects": 30,
+  "batch_size": 50000,
+  "n_batches": 6,
+  "activity": "WALKING",
+  "sampling_rate": 50,
+  "window_size": 128
+}

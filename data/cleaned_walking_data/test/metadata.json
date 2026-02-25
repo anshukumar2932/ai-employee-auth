@@ -1,0 +1,18 @@
+{
+  "n_samples": 496,
+  "n_subjects": 9,
+  "subjects": [
+    2,
+    4,
+    9,
+    10,
+    12,
+    13,
+    18,
+    20,
+    24
+  ],
+  "sampling_rate": 50,
+  "window_size": 128,
+  "activity": "WALKING"
+}
