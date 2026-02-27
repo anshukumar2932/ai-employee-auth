@@ -1,0 +1,9 @@
+{
+  "model_name": "Random Forest",
+  "accuracy": 0.9971988795518207,
+  "f1_score": 0.9971988795518207,
+  "num_classes": 30,
+  "train_samples": 1365,
+  "test_samples": 357,
+  "feature_dim": 561
+}

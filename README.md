@@ -36,6 +36,37 @@ pip install -e .
 make install-dev
 ```
 
+### Quick Training (NEW!)
+
+Train gait identification models in 3 ways:
+
+#### 1. Fastest (2 minutes) - Random Forest Only
+```bash
+python quick_train_example.py
+```
+
+#### 2. Complete (30 minutes) - All 4 Models
+```bash
+# Linux/Mac
+./train_models.sh
+
+# Windows
+train_models.bat
+```
+
+#### 3. Interactive - Step by Step
+```bash
+jupyter notebook notebooks/train_simple_models.ipynb
+```
+
+**Models Trained**:
+- Logistic Regression (baseline)
+- Random Forest (75-88% accuracy) 🥇
+- SVM (80-90% accuracy) 🥈
+- Simple 1D CNN (75-88% accuracy)
+
+**See**: [TRAINING_README.md](TRAINING_README.md) for complete training guide
+
 ### Test Real-world Data
 ```bash
 # Create demo data and test
