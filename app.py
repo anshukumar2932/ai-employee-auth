@@ -168,7 +168,7 @@ def create_gait_visualization(accel_data):
 # Main app
 def main():
     # Header
-    st.markdown('<div class="main-header">🚶 Stark Industries<br>Gait-Based Authentication System</div>', 
+    st.markdown('<div class="main-header">Gait-Based Authentication System</div>', 
                 unsafe_allow_html=True)
     
     # Load model
@@ -179,18 +179,18 @@ def main():
         st.image("https://img.icons8.com/color/96/000000/security-checked.png", width=100)
         st.title("Navigation")
         page = st.radio("Select Page", 
-                       ["🏠 Home", "🔐 Authentication", "📊 Analytics", 
-                        "📱 Real-World Test", "ℹ️ About"])
+                       ["Home", "Authentication", "Analytics", 
+                        "Real-World Test", "About"])
         
         st.markdown("---")
         st.markdown("### System Status")
         if model is not None:
-            st.success("✅ Model Loaded")
+            st.success("Model Loaded")
             if metadata:
                 st.info(f"**Accuracy:** {metadata.get('accuracy', 'N/A'):.2%}")
                 st.info(f"**Model:** {metadata.get('model_type', 'N/A')}")
         else:
-            st.error("❌ Model Not Found")
+            st.error("Model Not Found")
         
         st.markdown("---")
         st.markdown("### Quick Stats")
@@ -198,15 +198,15 @@ def main():
         st.metric("Authenticated Today", len(st.session_state.authenticated_users))
     
     # Main content
-    if page == "🏠 Home":
+    if page == "Home":
         show_home_page(model, metadata)
-    elif page == "🔐 Authentication":
+    elif page == "Authentication":
         show_authentication_page(model)
-    elif page == "📊 Analytics":
+    elif page == "Analytics":
         show_analytics_page()
-    elif page == "📱 Real-World Test":
+    elif page == "Real-World Test":
         show_realworld_test_page(model)
-    elif page == "ℹ️ About":
+    elif page == "About":
         show_about_page()
 
 def show_home_page(model, metadata):
@@ -231,7 +231,7 @@ def show_home_page(model, metadata):
     st.markdown("---")
     
     # System Overview
-    st.header("🎯 System Overview")
+    st.header("System Overview")
     
     col1, col2 = st.columns([2, 1])
     
@@ -241,23 +241,23 @@ def show_home_page(model, metadata):
         
         This contactless authentication system uses **gait analysis** to identify employees:
         
-        1. **📱 Data Collection**: Smartphone accelerometer captures walking patterns
-        2. **🔍 Feature Extraction**: 561 features extracted from 3-axis accelerometer data
-        3. **🤖 ML Classification**: Machine learning model identifies the person
-        4. **✅ Access Control**: Automatic door unlock for authorized personnel
+        1. **Data Collection**: Smartphone accelerometer captures walking patterns
+        2. **Feature Extraction**: 561 features extracted from 3-axis accelerometer data
+        3. **ML Classification**: Machine learning model identifies the person
+        4. **Access Control**: Automatic door unlock for authorized personnel
         
         ### Key Features
-        - ✨ **Contactless**: No physical interaction required
-        - 🚀 **Fast**: Authentication in < 2 seconds
-        - 🎯 **Accurate**: >80% identification accuracy
-        - 🔒 **Secure**: Biometric gait patterns are unique
-        - 📊 **Scalable**: Expandable with synthetic data generation
+        - **Contactless**: No physical interaction required
+        - **Fast**: Authentication in < 2 seconds
+        - **Accurate**: >80% identification accuracy
+        - **Secure**: Biometric gait patterns are unique
+        - **Scalable**: Expandable with synthetic data generation
         """)
     
     with col2:
         st.markdown('<div class="info-box">', unsafe_allow_html=True)
         st.markdown("""
-        ### 🔬 Technology Stack
+        ###Technology Stack
         - **ML Model**: Logistic Regression / Random Forest
         - **Features**: Time & Frequency Domain
         - **Data**: UCI HAR Dataset (30 subjects)
@@ -278,13 +278,13 @@ def show_home_page(model, metadata):
 
 def show_authentication_page(model):
     """Authentication page"""
-    st.header("🔐 Employee Authentication")
+    st.header("Employee Authentication")
     
     if model is None:
-        st.error("⚠️ Model not loaded. Please train the model first.")
+        st.error("Model not loaded. Please train the model first.")
         return
     
-    tab1, tab2 = st.tabs(["📤 Upload Data", "🎲 Demo Mode"])
+    tab1, tab2 = st.tabs(["Upload Data", "Demo Mode"])
     
     with tab1:
         st.markdown("""
@@ -304,10 +304,10 @@ def show_authentication_page(model):
                     st.error(f"CSV must contain columns: {required_cols}")
                     return
                 
-                st.success(f"✅ Loaded {len(df)} samples")
+                st.success(f"Loaded {len(df)} samples")
                 
                 # Show data preview
-                with st.expander("📊 Data Preview"):
+                with st.expander("Data Preview"):
                     st.dataframe(df.head(10))
                 
                 # Visualize
@@ -321,7 +321,7 @@ def show_authentication_page(model):
                 st.plotly_chart(fig, use_container_width=True)
                 
                 # Authenticate button
-                if st.button("🔍 Authenticate", type="primary", use_container_width=True):
+                if st.button("Authenticate", type="primary", use_container_width=True):
                     with st.spinner("Analyzing gait pattern..."):
                         # Extract features (simplified - you'd need proper feature extraction)
                         features = extract_features_from_raw(accel_data)
@@ -350,7 +350,7 @@ def show_authentication_page(model):
                         # Show result
                         if confidence > 0.7:
                             st.markdown('<div class="success-box">', unsafe_allow_html=True)
-                            st.success(f"✅ **ACCESS GRANTED**")
+                            st.success(f"**ACCESS GRANTED**")
                             st.markdown(f"**Employee ID:** {prediction}")
                             st.markdown(f"**Confidence:** {confidence:.2%}")
                             st.markdown('</div>', unsafe_allow_html=True)
@@ -358,7 +358,7 @@ def show_authentication_page(model):
                             st.balloons()
                         else:
                             st.markdown('<div class="danger-box">', unsafe_allow_html=True)
-                            st.error(f"❌ **ACCESS DENIED**")
+                            st.error(f"**ACCESS DENIED**")
                             st.markdown(f"**Confidence too low:** {confidence:.2%}")
                             st.markdown('</div>', unsafe_allow_html=True)
                 
@@ -366,7 +366,7 @@ def show_authentication_page(model):
                 st.error(f"Error processing file: {e}")
     
     with tab2:
-        st.markdown("### 🎲 Demo Mode")
+        st.markdown("### Demo Mode")
         st.info("Test the system with pre-loaded sample data")
         
         X_test, y_test = load_sample_data()
@@ -380,7 +380,7 @@ def show_authentication_page(model):
             with col2:
                 st.metric("True Subject ID", int(y_test[sample_idx]))
             
-            if st.button("🔍 Test Authentication", type="primary", use_container_width=True):
+            if st.button("Test Authentication", type="primary", use_container_width=True):
                 with st.spinner("Analyzing..."):
                     features = X_test[sample_idx].reshape(1, -1)
                     prediction = model.predict(features)[0]
@@ -393,17 +393,17 @@ def show_authentication_page(model):
                     with col2:
                         st.metric("Confidence", f"{confidence:.2%}")
                     with col3:
-                        match = "✅ Match" if prediction == y_test[sample_idx] else "❌ Mismatch"
+                        match = "Match" if prediction == y_test[sample_idx] else "Mismatch"
                         st.metric("Result", match)
                     
                     if prediction == y_test[sample_idx]:
-                        st.success("✅ Correct identification!")
+                        st.success("Correct identification!")
                     else:
-                        st.error(f"❌ Incorrect. Expected: {y_test[sample_idx]}, Got: {prediction}")
+                        st.error(f"Incorrect. Expected: {y_test[sample_idx]}, Got: {prediction}")
 
 def show_analytics_page():
     """Analytics dashboard"""
-    st.header("📊 System Analytics")
+    st.header("System Analytics")
     
     if not st.session_state.access_log:
         st.info("No data yet. Perform some authentications first!")
@@ -460,7 +460,7 @@ def show_analytics_page():
 
 def show_realworld_test_page(model):
     """Real-world testing page"""
-    st.header("📱 Real-World Testing")
+    st.header("Real-World Testing")
     
     st.markdown("""
     ### Test with Physics Toolbox Sensor Suite
@@ -473,7 +473,7 @@ def show_realworld_test_page(model):
     
     st.markdown('<div class="info-box">', unsafe_allow_html=True)
     st.markdown("""
-    ### 📝 Data Collection Tips
+    ### Data Collection Tips
     - Hold phone naturally in your hand or pocket
     - Walk at normal pace for 5-10 seconds
     - Ensure stable recording (50Hz recommended)
@@ -501,7 +501,7 @@ def show_realworld_test_page(model):
     if uploaded_file:
         try:
             df = pd.read_csv(uploaded_file)
-            st.success(f"✅ Loaded {len(df)} samples")
+            st.success(f"Loaded {len(df)} samples")
             
             # Show statistics
             col1, col2, col3 = st.columns(3)
@@ -523,7 +523,7 @@ def show_realworld_test_page(model):
                 fig = create_gait_visualization(accel_data)
                 st.plotly_chart(fig, use_container_width=True)
                 
-                if st.button("🔍 Test Authentication", type="primary"):
+                if st.button("Test Authentication", type="primary"):
                     st.info("Feature extraction and authentication would happen here!")
                     st.warning("Note: Real-world data may need preprocessing to match training data format")
             
@@ -535,7 +535,7 @@ def show_about_page():
     st.header("ℹ️ About This System")
     
     st.markdown("""
-    ## 🎯 Project Overview
+    ## Project Overview
     
     This is an **AI-Powered Contactless Employee Security System** developed for Stark Industries.
     It uses gait analysis from smartphone accelerometer data to authenticate employees.
@@ -557,7 +557,7 @@ def show_about_page():
     - Noise injection and time warping
     - Rotation and scaling transformations
     
-    ### 📊 Performance Metrics
+    ### Performance Metrics
     
     | Metric | Value |
     |--------|-------|
@@ -566,7 +566,7 @@ def show_about_page():
     | Real-world Accuracy | 70-75% |
     | Inference Time | <2s |
     
-    ### 🚀 Future Enhancements
+    ### Future Enhancements
     
     - [ ] Multi-modal authentication (gait + face)
     - [ ] Continuous authentication
@@ -574,7 +574,7 @@ def show_about_page():
     - [ ] Mobile app integration
     - [ ] Cloud deployment
     
-    ### 👥 Team
+    ### Team
     
     Developed as part of the AI Security Challenge
     

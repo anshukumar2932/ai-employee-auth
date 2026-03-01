@@ -487,7 +487,7 @@ def main():
     trainer = GaitTrainer()
     
     # Train all models
-    print("\n🚀 Starting Model Training Pipeline")
+    print("\nStarting Model Training Pipeline")
     print("="*60)
     
     # 1. Logistic Regression (Baseline)
@@ -503,7 +503,7 @@ def main():
     trainer.train_simple_cnn(epochs=50, batch_size=32, lr=0.001)
     
     # Generate reports and visualizations
-    print("\n📊 Generating Reports and Visualizations")
+    print("\nGenerating Reports and Visualizations")
     print("="*60)
     
     for model_name in trainer.results.keys():
@@ -518,7 +518,7 @@ def main():
     # Save best model
     trainer.save_best_model()
     
-    print("\n✅ Training Complete!")
+    print("\nTraining Complete!")
     print("="*60)
     print("Results saved to:")
     print("  - results/model_comparison.csv")

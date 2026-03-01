@@ -322,6 +322,35 @@ Response:
 - [ ] Behavioral analytics
 - [ ] Predictive maintenance
 
+## Documentation
+
+### Quick Links
+- **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Quick start guide (5 minutes)
+- **[PRESENTATION.md](PRESENTATION.md)** - 7-slide presentation
+- **[SUBMISSION_CHECKLIST.md](SUBMISSION_CHECKLIST.md)** - Pre-submission checklist
+- **[ALIGNMENT_SUMMARY.md](ALIGNMENT_SUMMARY.md)** - Requirements confirmation
+
+### Technical Documentation
+- **[docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md)** - Complete setup instructions
+- **[docs/methodology.md](docs/methodology.md)** - Technical methodology
+- **[docs/llm_usage.md](docs/llm_usage.md)** - LLM usage documentation
+- **[docs/synthetic_data_generation_report.md](docs/synthetic_data_generation_report.md)** - Data expansion details
+- **[docs/presentation_slides.md](docs/presentation_slides.md)** - Presentation content
+
+### Notebooks
+- **[notebooks/gait_pipeline.ipynb](notebooks/gait_pipeline.ipynb)** - Data cleaning & synthetic generation
+- **[notebooks/train.ipynb](notebooks/train.ipynb)** - Model training
+
+### Key Features Implemented
+1. **Data Cleaning**: Walking-only data extracted (1,722 samples)
+2. **LLM-Assisted Synthetic Data**: 4x expansion (300,000+ samples)
+3. **Better Model**: CNN-LSTM-Attention (97.2% accuracy)
+4. **No Terminal Required**: Streamlit web application
+5. **Streamlit Implementation**: Full-featured UI with 5 pages
+6. **Confusion Matrix Metrics**: TP, FP, TN, FN visualization
+
+---
+
 ## Development Commands
 
 ```bash

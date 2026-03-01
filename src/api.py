@@ -435,7 +435,7 @@ if __name__ == '__main__':
     print("Starting Gait Authentication API...")
     
     if not load_model():
-        print("❌ Failed to load model. Exiting.")
+        print("Failed to load model. Exiting.")
         sys.exit(1)
     
     app.start_time = time.time()
@@ -458,15 +458,15 @@ def main():
     print("Starting Gait Authentication API...")
     
     if not load_model():
-        print("❌ Failed to load model. Exiting.")
+        print("Failed to load model. Exiting.")
         sys.exit(1)
     
     app.start_time = time.time()
     
-    print("✅ Model loaded successfully")
+    print("Model loaded successfully")
     print(f"   Classes: {len(label_encoder.classes_)}")
     print(f"   Confidence threshold: {CONFIDENCE_THRESHOLD}")
-    print("\n🚀 API Endpoints:")
+    print("\nAPI Endpoints:")
     print("   POST /authenticate - Single authentication")
     print("   POST /batch_authenticate - Batch authentication")
     print("   GET /health - Health check")
