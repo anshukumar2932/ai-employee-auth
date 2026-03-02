@@ -294,8 +294,7 @@ python run.py
 ```
 
 ### Contact
-- **Email**: admin@docu3c.com
-- **GitHub**: [Repository Link]
+- **Email**: admin@docu3c.coml
 - **Documentation**: See README.md for detailed setup
 
 ---
