@@ -14,7 +14,7 @@ import json
 
 # Page config
 st.set_page_config(
-    page_title="Stark Industries - Gait Auth",
+    page_title="Gait Auth",
     page_icon="🚶",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -298,10 +298,36 @@ def show_authentication_page(model):
             try:
                 df = pd.read_csv(uploaded_file)
                 
+                # Clean column names (remove spaces and convert to lowercase)
+                df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_')
+                
+                # Try to map common column name variations
+                column_mapping = {
+                    'accelerometer(x)': 'accel_x',
+                    'accelerometer(y)': 'accel_y',
+                    'accelerometer(z)': 'accel_z',
+                    'accel_x': 'accel_x',
+                    'accel_y': 'accel_y',
+                    'accel_z': 'accel_z',
+                    'ax': 'accel_x',
+                    'ay': 'accel_y',
+                    'az': 'accel_z',
+                    'x': 'accel_x',
+                    'y': 'accel_y',
+                    'z': 'accel_z'
+                }
+                
+                # Rename columns based on mapping
+                for old_name, new_name in column_mapping.items():
+                    if old_name in df.columns:
+                        df.rename(columns={old_name: new_name}, inplace=True)
+                
                 # Validate columns
                 required_cols = ['accel_x', 'accel_y', 'accel_z']
                 if not all(col in df.columns for col in required_cols):
                     st.error(f"CSV must contain columns: {required_cols}")
+                    st.info(f"Found columns: {list(df.columns)}")
+                    st.info("Supported formats: accel_x/accel_y/accel_z, ax/ay/az, x/y/z, accelerometer(X)/accelerometer(Y)/accelerometer(Z)")
                     return
                 
                 st.success(f"Loaded {len(df)} samples")
@@ -460,75 +486,331 @@ def show_analytics_page():
 
 def show_realworld_test_page(model):
     """Real-world testing page"""
-    st.header("Real-World Testing")
+    st.header("🚶 Real-World Testing with Physics Toolbox")
     
-    st.markdown("""
-    ### Test with Physics Toolbox Sensor Suite
-    
-    1. **Download the app**: [Physics Toolbox Sensor Suite](https://play.google.com/store/apps/details?id=com.chrystianvieyra.physicstoolboxsuite)
-    2. **Record accelerometer data** while walking (5-10 seconds)
-    3. **Export as CSV** and upload here
-    4. **Test authentication** with your gait pattern
-    """)
+    # Quick start guide
+    with st.expander("📖 Quick Start Guide - Click to Expand", expanded=True):
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("""
+            ### Step 1: Install & Record
+            
+            1. **Download Physics Toolbox Sensor Suite**
+               - [Android Play Store](https://play.google.com/store/apps/details?id=com.chrystianvieyra.physicstoolboxsuite)
+               - [iOS App Store](https://apps.apple.com/us/app/physics-toolbox-suite/id1128914250)
+            
+            2. **Open Accelerometer Tool**
+               - Launch app → Select "Accelerometer"
+               - Set sampling rate: **50 Hz**
+            
+            3. **Record Your Walk**
+               - Tap Record button (red circle)
+               - Walk naturally for 5-10 seconds
+               - Tap Stop button
+            """)
+        
+        with col2:
+            st.markdown("""
+            ### Step 2: Export & Test
+            
+            4. **Export Data**
+               - Tap Share icon (📤)
+               - Select "Export as CSV"
+               - Email to yourself or save to cloud
+            
+            5. **Upload Here**
+               - Download CSV to your computer
+               - Upload using button below
+               - View your gait pattern
+            
+            6. **Test Authentication**
+               - Click "Test Authentication"
+               - See your predicted identity!
+            """)
     
     st.markdown('<div class="info-box">', unsafe_allow_html=True)
     st.markdown("""
-    ### Data Collection Tips
-    - Hold phone naturally in your hand or pocket
-    - Walk at normal pace for 5-10 seconds
-    - Ensure stable recording (50Hz recommended)
-    - Record in a straight line
-    - Multiple recordings improve accuracy
+    ### 💡 Recording Tips for Best Results
+    
+    **DO:** ✅ Walk at normal pace | ✅ Hold phone naturally | ✅ Record 5-10 seconds | ✅ Walk in straight line
+    
+    **DON'T:** ❌ Run or walk too fast | ❌ Stop suddenly | ❌ Change phone position | ❌ Walk on stairs
     """)
     st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown("---")
     
     # Sample data format
-    with st.expander("📄 Expected CSV Format"):
+    with st.expander("📄 Supported CSV Formats"):
+        st.markdown("""
+        The app automatically detects and supports these column formats:
+        - `accel_x, accel_y, accel_z` (standard)
+        - `ax, ay, az` (short form)
+        - `x, y, z` (minimal)
+        - `accelerometer(X), accelerometer(Y), accelerometer(Z)` (Physics Toolbox format)
+        
+        **Example CSV:**
+        """)
         sample_df = pd.DataFrame({
-            'time': [0.00, 0.02, 0.04, 0.06, 0.08],
+            'time': ['0.00', '0.02', '0.04', '0.06', '0.08'],
             'accel_x': [0.12, 0.15, 0.18, 0.14, 0.11],
             'accel_y': [9.81, 9.79, 9.83, 9.80, 9.82],
             'accel_z': [0.05, 0.07, 0.04, 0.06, 0.05]
         })
-        st.dataframe(sample_df)
+        st.dataframe(sample_df, use_container_width=True)
+        
+        st.info("💡 Column names with spaces are automatically cleaned (e.g., ' accel_x' → 'accel_x')")
     
     # Upload section
-    st.markdown("### 📤 Upload Your Data")
-    uploaded_file = st.file_uploader("Upload accelerometer CSV", type=['csv'], key='realworld')
+    st.markdown("---")
+    st.markdown("### 📤 Upload Your Accelerometer Data")
+    
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        uploaded_file = st.file_uploader(
+            "Choose your CSV file from Physics Toolbox", 
+            type=['csv'], 
+            key='realworld',
+            help="Upload the CSV file exported from Physics Toolbox Sensor Suite"
+        )
+    with col2:
+        st.markdown("**Need sample data?**")
+        if st.button("📥 Download Sample CSV"):
+            sample_csv = sample_df.to_csv(index=False)
+            st.download_button(
+                label="Download",
+                data=sample_csv,
+                file_name="sample_gait_data.csv",
+                mime="text/csv"
+            )
     
     if uploaded_file:
         try:
             df = pd.read_csv(uploaded_file)
-            st.success(f"Loaded {len(df)} samples")
+            
+            # Show original format
+            with st.expander("🔍 Original CSV Data"):
+                st.write("**Original columns:**", list(df.columns))
+                st.dataframe(df.head(), use_container_width=True)
+            
+            # Clean column names (remove spaces and convert to lowercase)
+            df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_')
+            
+            # Try to map common column name variations
+            column_mapping = {
+                'accelerometer(x)': 'accel_x',
+                'accelerometer(y)': 'accel_y',
+                'accelerometer(z)': 'accel_z',
+                'accel_x': 'accel_x',
+                'accel_y': 'accel_y',
+                'accel_z': 'accel_z',
+                'ax': 'accel_x',
+                'ay': 'accel_y',
+                'az': 'accel_z',
+                'x': 'accel_x',
+                'y': 'accel_y',
+                'z': 'accel_z'
+            }
+            
+            # Rename columns based on mapping
+            for old_name, new_name in column_mapping.items():
+                if old_name in df.columns:
+                    df.rename(columns={old_name: new_name}, inplace=True)
+            
+            # Check if we have required columns
+            required_cols = ['accel_x', 'accel_y', 'accel_z']
+            if not all(col in df.columns for col in required_cols):
+                st.error(f"❌ Required columns not found: {required_cols}")
+                st.info(f"**Found columns:** {list(df.columns)}")
+                st.warning("""
+                **Supported formats:**
+                - accel_x, accel_y, accel_z
+                - ax, ay, az
+                - x, y, z
+                - accelerometer(X), accelerometer(Y), accelerometer(Z)
+                """)
+                return
+            
+            st.success(f"✅ Successfully loaded {len(df)} samples")
             
             # Show statistics
-            col1, col2, col3 = st.columns(3)
+            st.markdown("### 📊 Data Statistics")
+            col1, col2, col3, col4 = st.columns(4)
             with col1:
-                st.metric("Duration", f"{len(df)/50:.2f}s")
+                st.metric("📏 Duration", f"{len(df)/50:.2f}s")
             with col2:
-                st.metric("Samples", len(df))
+                st.metric("📈 Samples", len(df))
             with col3:
-                st.metric("Sampling Rate", "~50Hz")
+                st.metric("⚡ Sampling Rate", "~50Hz")
+            with col4:
+                windows = max(0, (len(df) - 128) // 64 + 1)
+                st.metric("🪟 Windows", windows)
+            
+            # Show cleaned data
+            with st.expander("✨ Processed Data Preview"):
+                st.write("**Cleaned columns:**", list(df.columns))
+                st.dataframe(df.head(20), use_container_width=True)
             
             # Visualize
-            if all(col in df.columns for col in ['accel_x', 'accel_y', 'accel_z']):
-                accel_data = {
-                    'x': df['accel_x'].values,
-                    'y': df['accel_y'].values,
-                    'z': df['accel_z'].values
-                }
-                
-                fig = create_gait_visualization(accel_data)
-                st.plotly_chart(fig, use_container_width=True)
-                
-                if st.button("Test Authentication", type="primary"):
-                    st.info("Feature extraction and authentication would happen here!")
-                    st.warning("Note: Real-world data may need preprocessing to match training data format")
+            st.markdown("### 📉 Your Gait Pattern Visualization")
+            accel_data = {
+                'x': df['accel_x'].values,
+                'y': df['accel_y'].values,
+                'z': df['accel_z'].values
+            }
+            
+            fig = create_gait_visualization(accel_data)
+            st.plotly_chart(fig, use_container_width=True)
+            
+            # Authentication section
+            st.markdown("---")
+            st.markdown("### 🔐 Test Authentication")
+            
+            col1, col2 = st.columns([2, 1])
+            with col1:
+                st.info("""
+                **What happens when you click Test Authentication:**
+                1. Extract 561 features from your accelerometer data
+                2. Run through trained ML model
+                3. Predict your identity (Employee ID)
+                4. Calculate confidence score
+                5. Grant or deny access based on threshold (70%)
+                """)
+            with col2:
+                if model is None:
+                    st.error("⚠️ Model not loaded")
+                    st.warning("Train the model first")
+                else:
+                    st.success("✅ Model ready")
+                    st.info(f"Threshold: 70%")
+            
+            if st.button("🚀 Test Authentication", type="primary", use_container_width=True):
+                if model is None:
+                    st.error("Model not loaded. Please train the model first.")
+                else:
+                    with st.spinner("🔄 Analyzing your gait pattern..."):
+                        # Extract features
+                        features = extract_features_from_raw(accel_data)
+                        
+                        # Pad or truncate to match model input
+                        if len(features) < 561:
+                            features = np.pad(features, (0, 561 - len(features)))
+                        else:
+                            features = features[:561]
+                        
+                        # Predict
+                        features = features.reshape(1, -1)
+                        prediction = model.predict(features)[0]
+                        proba = model.predict_proba(features)[0]
+                        confidence = np.max(proba)
+                        
+                        # Show results
+                        st.markdown("---")
+                        st.markdown("### 🎯 Authentication Results")
+                        
+                        col1, col2, col3 = st.columns(3)
+                        with col1:
+                            st.metric("👤 Predicted ID", f"Employee {int(prediction)}")
+                        with col2:
+                            st.metric("📊 Confidence", f"{confidence:.1%}")
+                        with col3:
+                            status = "✅ GRANTED" if confidence > 0.7 else "❌ DENIED"
+                            st.metric("🚪 Access", status)
+                        
+                        if confidence > 0.7:
+                            st.markdown('<div class="success-box">', unsafe_allow_html=True)
+                            st.success("**🎉 ACCESS GRANTED**")
+                            st.markdown(f"""
+                            - **Employee ID:** {int(prediction)}
+                            - **Confidence:** {confidence:.2%}
+                            - **Status:** Door unlocked
+                            - **Timestamp:** {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+                            """)
+                            st.markdown('</div>', unsafe_allow_html=True)
+                            st.balloons()
+                        else:
+                            st.markdown('<div class="danger-box">', unsafe_allow_html=True)
+                            st.error("**🚫 ACCESS DENIED**")
+                            st.markdown(f"""
+                            - **Reason:** Confidence too low ({confidence:.2%} < 70%)
+                            - **Predicted ID:** {int(prediction)} (uncertain)
+                            - **Action:** Access denied for security
+                            - **Suggestion:** Try recording again with better technique
+                            """)
+                            st.markdown('</div>', unsafe_allow_html=True)
+                        
+                        # Show top 3 predictions
+                        st.markdown("---")
+                        st.markdown("### 📋 Top 3 Predictions")
+                        top_3_idx = np.argsort(proba)[-3:][::-1]
+                        top_3_probs = proba[top_3_idx]
+                        
+                        for i, (idx, prob) in enumerate(zip(top_3_idx, top_3_probs)):
+                            col1, col2 = st.columns([3, 1])
+                            with col1:
+                                st.write(f"**{i+1}. Employee {idx}**")
+                            with col2:
+                                st.write(f"{prob:.2%}")
+                            st.progress(float(prob))
+                        
+                        st.info("""
+                        **Note:** This model was trained on UCI HAR dataset with 30 subjects. 
+                        Real-world data from Physics Toolbox may have different characteristics, 
+                        which can affect accuracy. For production use, the model should be 
+                        retrained with data from actual employees.
+                        """)
             
         except Exception as e:
-            st.error(f"Error: {e}")
+            st.error(f"❌ Error processing file: {e}")
+            st.info("Please check that your CSV file is properly formatted and contains accelerometer data.")
+            
+            with st.expander("🐛 Debug Information"):
+                st.code(str(e))
+                st.write("**Troubleshooting:**")
+                st.write("1. Ensure CSV has columns: time, accel_x, accel_y, accel_z")
+                st.write("2. Check that data contains numeric values")
+                st.write("3. Verify file is not corrupted")
+                st.write("4. Try opening CSV in Excel to verify format")
+    
+    else:
+        # Show helpful message when no file uploaded
+        st.info("👆 Upload your CSV file above to get started!")
+        
+        st.markdown("---")
+        st.markdown("### 🎬 What to Expect")
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.markdown("""
+            **1️⃣ Upload**
+            - Choose your CSV file
+            - Automatic format detection
+            - Data validation
+            """)
+        with col2:
+            st.markdown("""
+            **2️⃣ Visualize**
+            - See your gait pattern
+            - Interactive charts
+            - Data statistics
+            """)
+        with col3:
+            st.markdown("""
+            **3️⃣ Authenticate**
+            - ML prediction
+            - Confidence score
+            - Access decision
+            """)
+        
+        st.markdown("---")
+        st.markdown("### 📚 Additional Resources")
+        st.markdown("""
+        - 📖 [Complete Testing Guide](docs/PHYSICS_TOOLBOX_GUIDE.md)
+        - 🎥 [Video Tutorial](#) (Coming soon)
+        - 💬 [FAQ & Troubleshooting](#)
+        - 🔧 [Technical Documentation](docs/methodology.md)
+        """)
 
 def show_about_page():
     """About page"""
